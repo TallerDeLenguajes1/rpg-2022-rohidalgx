@@ -45,9 +45,9 @@ public class personaje
     public DateTime CalcularNacimiento()
     {
         Random rnd = new Random();
-        DateTime FechaDeNacimiento = new DateTime(1723, 1, 1);                             //Fijo la menor fecha posible
-        int MaximoSumaFecha = (DateTime.Today - FechaDeNacimiento).Days;                   //Máximo número de días a sumar
-        FechaDeNacimiento = FechaDeNacimiento.AddDays(rnd.Next(MaximoSumaFecha));          //Sumo un número aleatorio de días a la fecha base
+        DateTime FechaDeNacimiento = new DateTime(1723, 1, 1);//es la minima fecha posible (300 años)                     
+        int MaximoSumaFecha = (DateTime.Today - FechaDeNacimiento).Days;//dias entre hoy y esa fecha minima                   
+        FechaDeNacimiento = FechaDeNacimiento.AddDays(rnd.Next(MaximoSumaFecha));//se le suma un random del total de dias          
         return (FechaDeNacimiento);
     }
 
@@ -65,6 +65,7 @@ public class personaje
     }
     public void mostrarDatos()
     {
+        Console.WriteLine("\n Datos");
         Console.WriteLine("\n Nombre:" + nombre);
         Console.WriteLine("\n Fecha de nacimiento:" + fechNac.ToShortDateString());
         Console.WriteLine("\n Su personaje es de tipo:" + tipo);
@@ -93,6 +94,7 @@ public class personaje
 
     public void mostrarCaracteristicas()
     {
+        Console.WriteLine("\n ------Caracteristicas de :" +nombre);
         Console.WriteLine("\n Velocidad del personaje:" + velocidad);
         Console.WriteLine("\n Destreza del personaje:" + destreza);
         Console.WriteLine("\n Fuerza del personaje:" + fuerza);
@@ -115,6 +117,8 @@ public class personaje
     static public personaje Pelea(personaje personaje1, personaje personaje2)
     {
         int numPelea = 0;
+        personaje1.mostrarCaracteristicas();
+        personaje2.mostrarCaracteristicas();
         Console.WriteLine("\n Salud de " + personaje1.nombre+ ":"+personaje1.salud);
         Console.WriteLine("\n Salud de " + personaje2.nombre +":"+personaje2.salud);
         while(numPelea < 3 && personaje1.salud>0 && personaje2.salud > 0)
@@ -166,5 +170,22 @@ public class personaje
 
         }
         return (P);
+    }
+
+
+    public void agregarGanador(string path, personaje ganador)
+    {
+        using TextWriter streamWriter = File.AppendText(path);
+        streamWriter.WriteLine("Personajes Ganadores" +";"+ "Edad" +";"+ "Tipo\n");
+        streamWriter.WriteLine(ganador.nombre + ";" + ganador.edad + ";" + ganador.tipo);
+
+    }
+
+    static public void mostrarArchivoCSV(string? path)
+    {
+        using TextReader streamReader = new StreamReader(path);
+        var texto = streamReader.ReadToEnd();
+        texto = texto.Replace(";", " ");
+        Console.WriteLine(texto);
     }
 }

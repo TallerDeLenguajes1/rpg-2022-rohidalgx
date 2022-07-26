@@ -3,6 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+
+public class desJSON
+{
+    [JsonPropertyName("tipo")]
+    public string? tipo { get; set; }
+
+    [JsonPropertyName("nombre")]
+    public string? nombre { get; set; }
+
+    [JsonPropertyName("apodo")]
+    public string? apodo { get; set; }
+
+    [JsonPropertyName("fechNac")]
+    public DateTime fechNac { get; set; }
+
+    [JsonPropertyName("edad")]
+    public int edad { get; set; }
+
+}
 
 
 public class personaje
@@ -10,28 +32,29 @@ public class personaje
     
     public List<string> listaTipos = new List<string>()
     {
-        "Ingeniero",
-        "Medico",
-        "Arquitecto",
-        "Contador",
-        "Fisico",
-        "Astronauta",
-        "Licenciado"
+        "Alicornio",
+        "Unicornio",
+        "Pagaso",
+        "Pony de Cristal",
+        "Pony Terrestre"
     };
 
     public List<string> listaApodos = new List<string>()
     {
-        "Pepe",
-        "Pili",
-        "Negri",
-        "Gorda" 
+        "Twilight Sparkle",
+        "Fluttershy",
+        "Pinkie Pie",
+        "Rarity",
+        "Rainbow Dash",
+        "Applejack"
     };
 
-    public string? tipo;
-    public string? nombre;
-    public string? apodo;
-    public DateTime fechNac;
-    public int edad;
+    public string? tipo { get; set; }
+    public string? nombre { get; set; }
+    public string? apodo { get; set; }
+    public DateTime fechNac { get; set; }
+    public int edad { get; set; }
+
     public int salud = 100;
 
     public void crearDatosAleatorios()
@@ -106,7 +129,7 @@ public class personaje
     {
         Random rnd = new Random();
         float pDisparo = personaje.destreza * personaje.fuerza * personaje.nivel;
-        float efectividadDisparo = rnd.Next(1, 101);//COMO QUE PORCENTUAL
+        float efectividadDisparo = rnd.Next(1, 101);//COMO QUE PORCENTUAL?????
         float valorAtaque = pDisparo * efectividadDisparo;
         float pDefensa = personaje.armadura * personaje.velocidad;
         int maxDanio = 50000;
@@ -176,7 +199,6 @@ public class personaje
     public void agregarGanador(string path, personaje ganador)
     {
         using TextWriter streamWriter = File.AppendText(path);
-        streamWriter.WriteLine("Personajes Ganadores" +";"+ "Edad" +";"+ "Tipo\n");
         streamWriter.WriteLine(ganador.nombre + ";" + ganador.edad + ";" + ganador.tipo);
 
     }

@@ -52,8 +52,14 @@ public class program
                 string? datoJson = sr.ReadLine();
 
                 listaPersonajes = JsonSerializer.Deserialize<List<personaje>>(datoJson); //VER
+                List<personaje> listaAux = new List<personaje>();
 
-                foreach (personaje jugador in listaPersonajes)
+                for(int i = 0; i < cantPersonajes; i++)
+                {
+                    listaAux.Add(listaPersonajes[i]);
+                }
+
+                foreach (personaje jugador in listaAux)
                 {
                     jugador.crearCaracteristicasAleatorias();
                     jugador.crearDatosAleatorios();

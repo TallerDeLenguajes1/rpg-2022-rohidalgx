@@ -6,30 +6,52 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-
-public class desJSON
+public class character
 {
-    [JsonPropertyName("tipo")]
-    public string? tipo { get; set; }
+    // Root myDeserializedClass = JsonSerializer.Deserialize<Root>(myJsonResponse);
+    public class Datum
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
 
-    [JsonPropertyName("nombre")]
-    public string? nombre { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
-    [JsonPropertyName("apodo")]
-    public string? apodo { get; set; }
+        [JsonPropertyName("alias")]
+        public string Alias { get; set; }
 
-    [JsonPropertyName("fechNac")]
-    public DateTime fechNac { get; set; }
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
 
-    [JsonPropertyName("edad")]
-    public int edad { get; set; }
+        [JsonPropertyName("sex")]
+        public string Sex { get; set; }
+
+        [JsonPropertyName("residence")]
+        public string Residence { get; set; }
+
+        [JsonPropertyName("occupation")]
+        public string Occupation { get; set; }
+
+        [JsonPropertyName("kind")]
+        public List<string> Kind { get; set; }
+
+        [JsonPropertyName("image")]
+        public List<string> Image { get; set; }
+    }
+
+    public class Root
+    {
+        [JsonPropertyName("status")]
+        public int Status { get; set; }
+
+        [JsonPropertyName("data")]
+        public List<Datum> Data { get; set; }
+    }
 
 }
-
-
 public class personaje
 {
-    
+
     public List<string> listaTipos = new List<string>()
     {
         "Alicornio",
@@ -49,6 +71,7 @@ public class personaje
         "Applejack"
     };
 
+    public string? nombrePlayer { get; set; }
     public string? tipo { get; set; }
     public string? nombre { get; set; }
     public string? apodo { get; set; }
@@ -57,18 +80,22 @@ public class personaje
 
     public int salud = 100;
 
-    public void crearDatosAleatorios()
+    public void crearDatosAleatorios(List<character.Datum> data)
     {
+        
         Random rnd = new Random();
-        tipo = listaTipos[rnd.Next(0, listaTipos.Count)];
-        apodo = listaApodos[rnd.Next(0, listaApodos.Count)];
+        int id = rnd.Next(0, data.Count);
+        nombre = data[id].Name;
+        apodo = data[id].Alias;
+        int cant = data[id].Kind.Count;
+        tipo = data[id].Kind[rnd.Next(0, cant)];
         fechNac = CalcularNacimiento();
         edad = calcularEdad(fechNac);
     }
     public DateTime CalcularNacimiento()
     {
         Random rnd = new Random();
-        DateTime FechaDeNacimiento = new DateTime(1723, 1, 1);//es la minima fecha posible (300 años)                     
+        DateTime FechaDeNacimiento = new DateTime(2010, 10, 10);//es la minima fecha posible (la fecha en la que se estreno la serie)                     
         int MaximoSumaFecha = (DateTime.Today - FechaDeNacimiento).Days;//dias entre hoy y esa fecha minima                   
         FechaDeNacimiento = FechaDeNacimiento.AddDays(rnd.Next(MaximoSumaFecha));//se le suma un random del total de dias          
         return (FechaDeNacimiento);
@@ -88,13 +115,13 @@ public class personaje
     }
     public void mostrarDatos()
     {
-        Console.WriteLine("\n Datos");
+        Console.WriteLine("\n ***Datos del personaje***");
         Console.WriteLine("\n Nombre:" + nombre);
+        Console.WriteLine("\n Apodo:" + apodo);
+        Console.WriteLine("\n Tipo:" + tipo);
         Console.WriteLine("\n Fecha de nacimiento:" + fechNac.ToShortDateString());
-        Console.WriteLine("\n Su personaje es de tipo:" + tipo);
-        Console.WriteLine("\n Su personaje se apoda:" + apodo);
-        Console.WriteLine("\n La edad de su personaje es:" + edad);
-        Console.WriteLine("\n Salud del personaje:" + edad);
+        Console.WriteLine("\n Edad:" + edad);
+        Console.WriteLine("\n ******");
 
     }
     
@@ -108,72 +135,107 @@ public class personaje
     public void crearCaracteristicasAleatorias()
     {
         Random rnd = new Random();
-        velocidad = rnd.Next(1, 11);
-        destreza = rnd.Next(1, 6);
-        fuerza = rnd.Next(1, 11);
         nivel = rnd.Next(1, 11);
-        armadura = rnd.Next(1, 11);
+        velocidad = nivel + rnd.Next(1, 11);
+        destreza = nivel + rnd.Next(1, 6);
+        fuerza = nivel + rnd.Next(1, 11);
+        armadura = nivel + rnd.Next(1, 11);
     }
 
     public void mostrarCaracteristicas()
     {
-        Console.WriteLine("\n ------Caracteristicas de :" +nombre);
-        Console.WriteLine("\n Velocidad del personaje:" + velocidad);
-        Console.WriteLine("\n Destreza del personaje:" + destreza);
-        Console.WriteLine("\n Fuerza del personaje:" + fuerza);
-        Console.WriteLine("\n Nivel del personaje:" + nivel);
-        Console.WriteLine("\n Armadura del personaje:" + armadura);
+        Console.WriteLine("\n ***Caracteristicas de: " +nombre +"***");
+        Console.WriteLine("\n Nivel:" + nivel);
+        Console.WriteLine("\n Velocidad:" + velocidad);
+        Console.WriteLine("\n Destreza:" + destreza);
+        Console.WriteLine("\n Fuerza:" + fuerza);
+        Console.WriteLine("\n Armadura:" + armadura);
+        Console.WriteLine("\n ******");
     }
 
     public float Combate(personaje personaje)//calculo de las estadisticas
     {
         Random rnd = new Random();
         float pDisparo = personaje.destreza * personaje.fuerza * personaje.nivel;
-        float efectividadDisparo = rnd.Next(1, 101);//COMO QUE PORCENTUAL?????
+        float efectividadDisparo = rnd.Next(1, 101);
         float valorAtaque = pDisparo * efectividadDisparo;
         float pDefensa = personaje.armadura * personaje.velocidad;
         int maxDanio = 50000;
-        float danioProvocado = (valorAtaque * efectividadDisparo - pDefensa) / maxDanio * 100;
+        float danioProvocado = (valorAtaque * efectividadDisparo - pDefensa) / maxDanio;
         return (danioProvocado);
     }
 
     static public personaje Pelea(personaje personaje1, personaje personaje2)
     {
+        Console.WriteLine("\n " + personaje1.nombre + " VS " + personaje2.nombre);
+        Console.ReadKey();
         int numPelea = 0;
         personaje1.mostrarCaracteristicas();
+        Console.ReadKey();
         personaje2.mostrarCaracteristicas();
-        Console.WriteLine("\n Salud de " + personaje1.nombre+ ":"+personaje1.salud);
-        Console.WriteLine("\n Salud de " + personaje2.nombre +":"+personaje2.salud);
+        Console.ReadKey();
         while(numPelea < 3 && personaje1.salud>0 && personaje2.salud > 0)
         {
+            Console.WriteLine("\n Round: " + (numPelea+1));
             personaje2.salud = Convert.ToInt32(personaje2.salud - personaje1.Combate(personaje1));
-            Console.WriteLine("\n Salud de " + personaje2.nombre + " despues del golpe:" + personaje2.salud);
+            if(personaje2.salud < 0)
+            {
+                personaje2.salud = 0;
+                Console.WriteLine("\n Salud de " + personaje2.nombre + " despues del golpe: " + personaje2.salud);
+                Console.WriteLine("\n Queda fuera de combate.");
+            }
+            else
+            {
+                Console.WriteLine("\n Salud de " + personaje2.nombre + " despues del golpe: " + personaje2.salud);
+            }
             personaje1.salud = Convert.ToInt32(personaje1.salud - personaje2.Combate(personaje2));
-            Console.WriteLine("\n Salud de " + personaje1.nombre + " despues del golpe:" + personaje1.salud);
+
+            if (personaje1.salud < 0)
+            {
+                personaje1.salud = 0;
+                Console.WriteLine("\n Salud de " + personaje1.nombre + " despues del golpe:" + personaje1.salud);
+                Console.WriteLine("\n Queda fuera de combate.");
+            }
+            else
+            {
+                Console.WriteLine("\n Salud de " + personaje1.nombre + " despues del golpe:" + personaje1.salud);
+            }
             numPelea++;
         }
 
-        if (personaje1.salud >= personaje2.salud)
+        if (personaje1.salud >= personaje2.salud && personaje1.salud>0)
         {
-            Console.WriteLine("EL GANADOR DE LA PELEA ES:" + personaje1.nombre);
+            Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje1.nombre);
             personaje1 = personaje1.Beneficio(personaje1);
+            Console.ReadKey();
             return (personaje1);//DEVUELVE EL GANADOR
         }
         else
         {
-            Console.WriteLine("EL GANADOR DE LA PELEA ES:" + personaje2.nombre);
-            personaje2 = personaje2.Beneficio(personaje2);
-            return (personaje2);
+            if(personaje2.salud > 0)
+            {
+                Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje2.nombre);
+                personaje2 = personaje2.Beneficio(personaje2);
+                Console.ReadKey();
+                return (personaje2);
+
+            }
+            else
+            {
+                Console.WriteLine("\n No sobrevivio nadie");
+                return (null);
+            }
         }
     }
 
     public personaje Beneficio(personaje P)
     {
         Random rnd = new Random();
+        P.salud = 100;
         switch (rnd.Next(1, 6))
         {
             case 1:
-                P.salud += 10;
+                P.nivel += 2;
                 break;
             case 2:
                 P.velocidad += P.velocidad * rnd.Next(5, 11) / 100;
@@ -199,7 +261,7 @@ public class personaje
     public void agregarGanador(string path, personaje ganador)
     {
         using TextWriter streamWriter = File.AppendText(path);
-        streamWriter.WriteLine(ganador.nombre + ";" + ganador.edad + ";" + ganador.tipo);
+        streamWriter.WriteLine(ganador.nombrePlayer + ";" + ganador.nombre + ";" + ganador.edad + ";" + ganador.tipo);
 
     }
 

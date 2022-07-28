@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using System.Net;
 
 
 public class program
@@ -10,10 +11,14 @@ public class program
         int siOno = 0;
         int siOnoJSON = 0;
         FileStream fileStream;
-        Console.WriteLine("\n BIENVENIDOS A MI JUEGUITO DE PONYS \n");
+        Console.WriteLine("\n BIENVENIDOS A EQUESTRIA \n");
 
+        ///////////////
+        character.Root API = new character.Root();
+        API = conectarAPI();
+        //////////////
 
-        Console.WriteLine("Desea ver un listado de todos los ganadores? si =1, no=0");
+        Console.WriteLine("\n Desea ver un listado de todos los ganadores? si =1, no=0");
         siOno = Convert.ToInt32(Console.ReadLine());
         string? direccionArchivo = @"C:\taller_repo\rpg-2022-rohidalgx\rpg\ganadores.csv";
         if (!File.Exists(direccionArchivo))//SI NO EXISTE EL ARCHIVO LO CREA
@@ -34,7 +39,7 @@ public class program
         Console.WriteLine("\n Con cuantos jugadores desea jugar? ");
         cantPersonajes = Convert.ToInt32(Console.ReadLine());
 
-        Console.WriteLine("Desea usar un personaje anterior? si =1, no=0");
+        Console.WriteLine("\n Desea usar un personaje anterior? si =1, no=0");
         siOnoJSON = Convert.ToInt32(Console.ReadLine());
         Queue<personaje> filaPersonajes = new Queue<personaje>();
         List<personaje> listaPersonajes = new List<personaje>();
@@ -51,18 +56,18 @@ public class program
                 StreamReader sr = new StreamReader(pathJSON);
                 string? datoJson = sr.ReadLine();
 
-                listaPersonajes = JsonSerializer.Deserialize<List<personaje>>(datoJson); //VER
-                List<personaje> listaAux = new List<personaje>();
+                listaPersonajes = JsonSerializer.Deserialize<List<personaje>>(datoJson); //aca mete todos los jugadores anteriores en una lista
+                List<personaje> listaAux = new List<personaje>(); //uso esta lista auxiliar para meter solo X cant de jugadores
 
-                for(int i = 0; i < cantPersonajes; i++)
+                for(int i = 0; i < cantPersonajes; i++) //aca hago eso
                 {
                     listaAux.Add(listaPersonajes[i]);
                 }
 
-                foreach (personaje jugador in listaAux)
+                foreach (personaje jugador in listaAux) //aca les doy caracteristicas y eso y los paso a una fila
                 {
                     jugador.crearCaracteristicasAleatorias();
-                    jugador.crearDatosAleatorios();
+                    jugador.crearDatosAleatorios(API.Data);
                     filaPersonajes.Enqueue(jugador);
                 }
 
@@ -77,27 +82,37 @@ public class program
             {
                 personaje personaje = new personaje();
                 personaje.crearCaracteristicasAleatorias();
-                personaje.crearDatosAleatorios();
-                Console.WriteLine("\n Nombre del jugador [" + i+1 + "]? ");
-                personaje.nombre = Console.ReadLine();
+                personaje.crearDatosAleatorios(API.Data);
+                personaje.nombrePlayer = nombre;
                 filaPersonajes.Enqueue(personaje);
             }
             guardarParticipantesJSON(filaPersonajes, pathJSON);
 
         }
 
-
-
         personaje ganador = new personaje();
         while (filaPersonajes.Count > 1)
         {
             ganador = personaje.Pelea(filaPersonajes.Dequeue(), filaPersonajes.Dequeue());
-            filaPersonajes.Enqueue(ganador);
+            if (ganador != null)
+            {
+                filaPersonajes.Enqueue(ganador);
+            }
         }
 
-        Console.WriteLine("EL GANADOR SUPREMO ES:" + ganador.nombre);
-        ganador.mostrarDatos();
-        ganador.agregarGanador(direccionArchivo, ganador);
+        if(ganador != null)
+        {
+            Console.WriteLine("\n******************************");
+            Console.WriteLine("\n EL PONY GANADOR DE EQUESTRIA ES: " + ganador.nombre);
+            ganador.mostrarDatos();
+            ganador.agregarGanador(direccionArchivo, ganador);
+            Console.ReadKey();
+
+        }
+        else
+        {
+            Console.WriteLine("\n NO GANO NADIE ");
+        }
 
     }
     public static void guardarParticipantesJSON(Queue<personaje> personajes, string path)
@@ -123,5 +138,50 @@ public class program
         SWJSON.Close();                                                       
         FSJSON.Close();
     }
+
+    public static character.Root conectarAPI()
+    {
+
+        var url = "https://ponyweb.ml/v1/character/all";
+        var request = (HttpWebRequest)WebRequest.Create(url);
+        request.Method = "GET";
+        request.ContentType = "application/json";
+        request.Accept = "application/json";
+
+        character.Root? api = new character.Root();
+        try
+        {
+            using (WebResponse respuesta = request.GetResponse())
+            {
+                using (Stream streamReader = respuesta.GetResponseStream())
+                {
+                    if (streamReader != null)
+                    {
+                        using (StreamReader objReader = new StreamReader(streamReader))
+                        {
+                            string? responseBody = objReader.ReadToEnd();
+                            api = JsonSerializer.Deserialize<character.Root>(responseBody);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No se obtuvo respuesta del servicio web");
+                        return (null);
+                    }
+                }
+            }
+        }
+        catch (WebException e)
+        {
+            Console.WriteLine(e.ToString());
+            return (null);
+        }
+
+        return (api);
+    }
+
+
+
+
 
 }

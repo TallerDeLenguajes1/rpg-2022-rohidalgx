@@ -17,30 +17,35 @@ public class program
         character.Root API = new character.Root();
         API = conectarAPI();
         //////////////
+        string? direccionArchivo = "ganadores.csv";
 
-        Console.WriteLine("\n Desea ver un listado de todos los ganadores? si =1, no=0");
-        siOno = Convert.ToInt32(Console.ReadLine());
-        string? direccionArchivo = @"C:\taller_repo\rpg-2022-rohidalgx\rpg\ganadores.csv";
-        if (!File.Exists(direccionArchivo))//SI NO EXISTE EL ARCHIVO LO CREA
+
+        if (File.Exists(direccionArchivo))
         {
-            fileStream = File.Create(direccionArchivo);
-            fileStream.Close();
-        }
-        if (siOno == 1)
-        {
-            personaje.mostrarArchivoCSV(direccionArchivo);
+            Console.WriteLine("\n Desea ver un listado de todos los ganadores? si =1, no=0");
+            siOno = Convert.ToInt32(Console.ReadLine());
+            if (siOno == 1)
+            {
+                personaje.mostrarArchivoCSV(direccionArchivo);
+
+            }
 
         }
+        
 
-        string? pathJSON = @"C:\taller_repo\rpg-2022-rohidalgx\rpg\jugadores.json";
+        string? pathJSON = "jugadores.json";
 
         Console.WriteLine("\n Ingrese su nombre");
         string? nombre = Console.ReadLine();
         Console.WriteLine("\n Con cuantos jugadores desea jugar? ");
         cantPersonajes = Convert.ToInt32(Console.ReadLine());
 
-        Console.WriteLine("\n Desea usar un personaje anterior? si =1, no=0");
-        siOnoJSON = Convert.ToInt32(Console.ReadLine());
+        if (File.Exists(pathJSON))
+        {
+            Console.WriteLine("\n Desea usar un personaje anterior? si =1, no=0");
+            siOnoJSON = Convert.ToInt32(Console.ReadLine());
+
+        }
         Queue<personaje> filaPersonajes = new Queue<personaje>();
         List<personaje> listaPersonajes = new List<personaje>();
 
@@ -48,8 +53,7 @@ public class program
         {
             if (!File.Exists(pathJSON))
             {
-                Console.WriteLine("No existe un Json de participantes. Creando nuevos participantes...");
-                siOnoJSON = 0;
+                Console.WriteLine("No existe un Json de participantes.");
             }
             else
             {
@@ -125,18 +129,22 @@ public class program
             File.Create(path);
 
         }
-        string? JSON; 
+        else
+        {
+            string? JSON; 
 
 
-        FileStream FSJSON = new FileStream(path, FileMode.Open);
-        StreamWriter SWJSON = new StreamWriter(FSJSON);
+            FileStream FSJSON = new FileStream(path, FileMode.Open);
+            StreamWriter SWJSON = new StreamWriter(FSJSON);
 
-        JSON = JsonSerializer.Serialize(personajes);         
+            JSON = JsonSerializer.Serialize(personajes);         
 
-        SWJSON.WriteLine(JSON);                                    
+            SWJSON.WriteLine(JSON);                                    
 
-        SWJSON.Close();                                                       
-        FSJSON.Close();
+            SWJSON.Close();                                                       
+            FSJSON.Close();
+
+        }
     }
 
     public static character.Root conectarAPI()

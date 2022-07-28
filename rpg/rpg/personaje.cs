@@ -267,9 +267,19 @@ public class personaje
 
     static public void mostrarArchivoCSV(string? path)
     {
-        using TextReader streamReader = new StreamReader(path);
-        var texto = streamReader.ReadToEnd();
-        texto = texto.Replace(";", " ");
-        Console.WriteLine(texto);
+        FileStream fileStream;
+        if (!File.Exists(path))//SI NO EXISTE EL ARCHIVO LO CREA
+        {
+            fileStream = File.Create(path);
+            fileStream.Close();
+        }
+        else
+        {
+            using TextReader streamReader = new StreamReader(path);
+            var texto = streamReader.ReadToEnd();
+            texto = texto.Replace(";", " ");
+            Console.WriteLine(texto);
+
+        }
     }
 }

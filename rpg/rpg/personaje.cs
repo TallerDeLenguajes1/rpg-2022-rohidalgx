@@ -52,24 +52,24 @@ public class character
 public class personaje
 {
 
-    public List<string> listaTipos = new List<string>()
-    {
-        "Alicornio",
-        "Unicornio",
-        "Pagaso",
-        "Pony de Cristal",
-        "Pony Terrestre"
-    };
+    //public List<string> listaTipos = new List<string>()
+    //{
+    //    "Alicornio",
+    //    "Unicornio",
+    //    "Pagaso",
+    //    "Pony de Cristal",
+    //    "Pony Terrestre"
+    //};
 
-    public List<string> listaApodos = new List<string>()
-    {
-        "Twilight Sparkle",
-        "Fluttershy",
-        "Pinkie Pie",
-        "Rarity",
-        "Rainbow Dash",
-        "Applejack"
-    };
+    //public List<string> listaApodos = new List<string>()
+    //{
+    //    "Twilight Sparkle",
+    //    "Fluttershy",
+    //    "Pinkie Pie",
+    //    "Rarity",
+    //    "Rainbow Dash",
+    //    "Applejack"
+    //};
 
     public string? nombrePlayer { get; set; }
     public string? tipo { get; set; }
@@ -187,6 +187,7 @@ public class personaje
                 Console.WriteLine("\n Salud de " + personaje2.nombre + " despues del golpe: " + personaje2.salud);
                 Console.WriteLine("\n Queda fuera de combate.");
                 Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje1.nombre);
+                personaje1 = personaje1.Beneficio(personaje1);
                 return (personaje1);
             }
             else
@@ -201,6 +202,7 @@ public class personaje
                 Console.WriteLine("\n Salud de " + personaje1.nombre + " despues del golpe:" + personaje1.salud);
                 Console.WriteLine("\n Queda fuera de combate.");
                 Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje2.nombre);
+                personaje2 = personaje2.Beneficio(personaje2);
                 return (personaje2);
             }
             else

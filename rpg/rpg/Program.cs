@@ -11,7 +11,7 @@ public class program
         int siOno = 0;
         int siOnoJSON = 0;
         FileStream fileStream;
-        Console.WriteLine("\n BIENVENIDOS A EQUESTRIA \n");
+        Console.WriteLine("\n BIENVENIDOS AL REINO DE EQUESTRIA \n");
 
         ///////////////
         character.Root API = new character.Root();

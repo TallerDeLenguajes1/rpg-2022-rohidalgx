@@ -167,22 +167,27 @@ public class personaje
 
     static public personaje Pelea(personaje personaje1, personaje personaje2)
     {
+        Console.ReadKey();
+        Console.WriteLine("\n --------------------");
         Console.WriteLine("\n " + personaje1.nombre + " VS " + personaje2.nombre);
+        Console.WriteLine("\n --------------------");
         Console.ReadKey();
         int numPelea = 0;
         personaje1.mostrarCaracteristicas();
         Console.ReadKey();
         personaje2.mostrarCaracteristicas();
         Console.ReadKey();
-        while(numPelea < 3 && personaje1.salud>0 && personaje2.salud > 0)
+        while (numPelea < 3 && personaje1.salud > 0 && personaje2.salud > 0)
         {
-            Console.WriteLine("\n Round: " + (numPelea+1));
+            Console.WriteLine("\n Round: " + (numPelea + 1));
             personaje2.salud = Convert.ToInt32(personaje2.salud - personaje1.Combate(personaje1));
-            if(personaje2.salud < 0)
+            if (personaje2.salud < 0)
             {
                 personaje2.salud = 0;
                 Console.WriteLine("\n Salud de " + personaje2.nombre + " despues del golpe: " + personaje2.salud);
                 Console.WriteLine("\n Queda fuera de combate.");
+                Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje1.nombre);
+                return (personaje1);
             }
             else
             {
@@ -195,6 +200,8 @@ public class personaje
                 personaje1.salud = 0;
                 Console.WriteLine("\n Salud de " + personaje1.nombre + " despues del golpe:" + personaje1.salud);
                 Console.WriteLine("\n Queda fuera de combate.");
+                Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje2.nombre);
+                return (personaje2);
             }
             else
             {
@@ -203,7 +210,7 @@ public class personaje
             numPelea++;
         }
 
-        if (personaje1.salud >= personaje2.salud && personaje1.salud>0)
+        if (personaje1.salud >= personaje2.salud && personaje1.salud > 0)
         {
             Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje1.nombre);
             personaje1 = personaje1.Beneficio(personaje1);
@@ -212,7 +219,7 @@ public class personaje
         }
         else
         {
-            if(personaje2.salud > 0)
+            if (personaje2.salud > 0)
             {
                 Console.WriteLine("\n EL GANADOR DE LA PELEA ES:" + personaje2.nombre);
                 personaje2 = personaje2.Beneficio(personaje2);
@@ -278,6 +285,7 @@ public class personaje
             using TextReader streamReader = new StreamReader(path);
             var texto = streamReader.ReadToEnd();
             texto = texto.Replace(";", " ");
+            Console.WriteLine("\n Nombre del Jugador | Nombre Pony | Edad | Tipo");
             Console.WriteLine(texto);
 
         }

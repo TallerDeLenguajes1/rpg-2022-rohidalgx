@@ -63,9 +63,21 @@ public class program
                 listaPersonajes = JsonSerializer.Deserialize<List<personaje>>(datoJson); //aca mete todos los jugadores anteriores en una lista
                 List<personaje> listaAux = new List<personaje>(); //uso esta lista auxiliar para meter solo X cant de jugadores
 
-                for(int i = 0; i < cantPersonajes; i++) //aca hago eso
+                if(listaPersonajes.Count < cantPersonajes)
                 {
-                    listaAux.Add(listaPersonajes[i]);
+                    Console.WriteLine("\n No hay suficientes personajes ya existentes, se usaran los que hay HC");
+                    for (int i = 0; i < listaPersonajes.Count; i++) //aca hago eso
+                    {
+                        listaAux.Add(listaPersonajes[i]);
+                    }
+                }
+                else
+                {
+                    for(int i = 0; i < cantPersonajes; i++) //aca hago eso
+                    {
+                        listaAux.Add(listaPersonajes[i]);
+                    }
+
                 }
 
                 foreach (personaje jugador in listaAux) //aca les doy caracteristicas y eso y los paso a una fila
